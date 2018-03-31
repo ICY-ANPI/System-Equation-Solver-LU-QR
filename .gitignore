@@ -1,0 +1,7 @@
+build/*
+.project
+test/Sandbox.cpp
+Debug/
+.cproject
+.settings/*
+.externalToolBuilders/*
