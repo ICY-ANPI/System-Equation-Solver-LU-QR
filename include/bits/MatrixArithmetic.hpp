@@ -13,6 +13,8 @@
 
 #include "Intrinsics.hpp"
 #include <type_traits>
+#include "Exception.hpp"
+#include <iostream>
 
 namespace anpi
 {
@@ -113,6 +115,65 @@ namespace anpi
         *here++ -= *bptr++;
       }
     }
+
+
+
+
+
+    /*
+     * Multiplication Matrix * Matrix
+     */
+
+    // Fall back implementations
+
+    // In-copy implementation c=a*b
+    template<typename T,class Alloc>
+    inline void multiplication(const Matrix<T,Alloc>& a,
+    		const Matrix<T,Alloc>& b,
+			Matrix<T,Alloc>& c) {
+
+
+    	if (a.cols() != b.rows()) {
+    		throw anpi::Exception("Incompatible size of both matrix at multiplication method");
+    	}
+
+    	c.allocate(a.rows(),b.cols());
+    	for (size_t i = 0; i < a.rows(); i++){
+    		for(size_t j = 0; j < b.cols();j++){
+    			T val(T(0));
+    			for(size_t z = 0; z < b.rows();z++){
+        			val += a[i][z]*b[z][j];
+    			}
+        		c[i][j] = val;
+    		}
+    	}
+    }
+
+
+    template<typename T,class Alloc>
+    inline void multiplication(const Matrix<T,Alloc>& a,
+    		const std::vector<T>& b,
+			Matrix<T,Alloc>& c) {
+
+
+    	if (a.cols() != b.size()) {
+    		throw anpi::Exception("Incompatible size of both matrix at multiplication method");
+    	}
+
+    	c.allocate(a.rows(),1);
+    	for (size_t i = 0; i < a.rows(); i++){
+    		T val(T(0));
+    		for(size_t j = 0; j < b.size();j++){
+    			val += a[i][j]*b[j];
+    		}
+    		c[i][0] = val;
+    	}
+    }
+
+
+
+
+
 
   } // namespace fallback
 
@@ -397,6 +458,33 @@ namespace anpi
 
       ::anpi::fallback::subtract(a,b);
     }
+
+
+
+
+    /*
+     * Multiplication
+     */
+
+    // Fall back implementations
+
+    // In-copy implementation c=a*b
+    template<typename T,class Alloc>
+    inline void multiply(const Matrix<T,Alloc>& a,
+                         const Matrix<T,Alloc>& b,
+                         Matrix<T,Alloc>& c) {
+      ::anpi::fallback::multiplication(a,b,c);
+    }
+
+
+    template<typename T,class Alloc>
+    inline void multiply(const Matrix<T,Alloc>& a,
+                         const std::vector<T>& b,
+                         Matrix<T,Alloc>& c) {
+      ::anpi::fallback::multiplication(a,b,c);
+    }
+
+
   } // namespace simd
 
 

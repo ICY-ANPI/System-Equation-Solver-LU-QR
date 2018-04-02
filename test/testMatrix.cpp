@@ -40,6 +40,8 @@ typedef anpi::Matrix<double  ,alloc> dmatrix;
 typedef anpi::Matrix<float   ,alloc> fmatrix;
 typedef anpi::Matrix<int     ,alloc> imatrix;
 
+
+
 // aligned allocator
 typedef anpi::aligned_allocator<float> aalloc;
 
@@ -66,6 +68,7 @@ typedef anpi::Matrix<double  ,aralloc> ardmatrix;
 typedef anpi::Matrix<float   ,aralloc> arfmatrix;
 typedef anpi::Matrix<int     ,aralloc> arimatrix;
 
+
 #if 1
 # define dispatchTest(func) \
   func<cmatrix>();          \
@@ -85,6 +88,20 @@ typedef anpi::Matrix<int     ,aralloc> arimatrix;
 
 #else
 # define dispatchTest(func) func<arfmatrix>(); 
+#endif
+
+
+
+
+#if 1
+# define multiTest(func) \
+  func<int>();			\
+  func<float>();			\
+  func<dcomplex>();			\
+  func<double>();
+
+#else
+# define multiTest(func) func<float>();
 #endif
 
 
@@ -183,6 +200,73 @@ BOOST_AUTO_TEST_CASE(Comparison)
 {
   dispatchTest(testComparison);
 }
+
+
+
+template<class M>
+void printMat(M c){
+	std::cout << "MATRIX START HERE!" << std::endl;
+	std::cout << "==================="<< std::endl;
+
+	for (size_t i = 0; i < c.rows(); i++){
+		for(size_t j = 0; j < c.cols();j++){
+			std::cout << c[i][j] << " ";
+		}
+		std::cout << std::endl;
+	}
+	std::cout << "==================="<< std::endl;
+}
+
+
+
+template<class M>
+void multi() {
+  // == and !=
+  M a = { {1,2,-3},{4,0,-2}};
+  M b = { {3,1},{2,4},{-1,5} };
+  M d = { {3,1},{-1,5} };
+  M e = { {3,1,2},{2,4,2},{-1,5,2} };
+  M c = (a*b);
+  M f = {{10,-6},{14,-6}};
+  BOOST_CHECK(c == f );
+
+  try{
+	  M q = a*d;
+	  BOOST_CHECK(false && "Error at matrix bad size non-catched");
+  }
+  catch(anpi::Exception &e){
+	  BOOST_CHECK( true && "Matrix bad size at multiplication catched");
+	  std::cout << "Catched: " << e.what() << std::endl;
+  }
+
+  M g = (a*e);
+}
+
+template<class M,typename V>
+void multi2(){
+	M im = { {1,2,-3},{4,0,-2}};
+	V v = {1,2,3};
+	M r = im*v;
+	printMat<M>(r);
+}
+
+template<typename T>
+void multi3(){
+	multi2<anpi::Matrix<T,std::allocator<T>>, std::vector<T>>();
+}
+
+
+
+BOOST_AUTO_TEST_CASE(Multi)
+{
+  dispatchTest(multi);
+  multiTest(multi3);
+
+
+}
+
+
+
 
 template<class M>
 void testAssignment() {

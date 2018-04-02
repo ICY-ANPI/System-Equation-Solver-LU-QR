@@ -314,6 +314,12 @@ namespace anpi
     /// Subtract another matrix to this one, and leave the result in here
     Matrix& operator-=(const Matrix& other);
     
+    /// Overload multipliers operators
+
+    //Matrix& operator*(const std::vector<T>& other);
+
+
+
     //@}
 
   private:
@@ -352,6 +358,9 @@ namespace anpi
   template<typename T,class Alloc>
   Matrix<T,Alloc> operator*(const Matrix<T,Alloc>& a,
                             const Matrix<T,Alloc>& b);
+
+  template<typename T,class Alloc>
+  Matrix<T,Alloc> operator*(const std::vector<T,Alloc>& b);
   //@}
   
 } // namespace ANPI

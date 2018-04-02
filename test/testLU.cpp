@@ -70,16 +70,32 @@ namespace anpi {
         unpack(LU,L,U);
         Matrix<T> Ar=L*U;
 
+        std::cout << "THE MATRIX A IS: " << std::endl;
+        anpi::printMat<Matrix<T>>(A);
+
+        std::cout << "THE MATRIX Ar IS: " << std::endl;
+
+    	anpi::printMat<Matrix<T>>(Ar);
+
+
+
+
         const T eps = std::numeric_limits<T>::epsilon();
 
         BOOST_CHECK(Ar.rows()==A.rows());
         BOOST_CHECK(Ar.cols()==A.cols());
-
+        bool iguales = true;
         for (size_t i=0;i<Ar.rows();++i) {
           for (size_t j=0;j<Ar.cols();++j) {
             BOOST_CHECK(std::abs(Ar(i,j)-A(i,j)) < eps);
+            iguales = iguales && std::abs(Ar(i,j)-A(i,j)) < eps;
+
           }
         }
+        if (iguales){
+        	std::cout << "Ambas matrices son iguales Ar y A" << std::endl;
+        }
+
       }
     }
 

@@ -10,6 +10,9 @@
 
 #include "bits/MatrixArithmetic.hpp"
 
+#include <iostream>
+
+
 namespace anpi
 {
 
@@ -424,9 +427,28 @@ namespace anpi
   template<typename T,class Alloc>
   Matrix<T,Alloc> operator*(const Matrix<T,Alloc>& a,
                             const Matrix<T,Alloc>& b) {
-    
-    
-    assert(false && "Not implemented yet");
+
+	  if (a.cols() != b.rows()) {
+	      		throw anpi::Exception("Incompatible size of both matrix at multiplication method");
+	  }
+
+	  Matrix<T,Alloc> c(a.rows(),a.cols(),anpi::DoNotInitialize);
+	  ::anpi::aimpl::multiply(a,b,c);
+	  return c;
+
+    //assert(false && "Not implemented yet");
+  }
+
+  template<typename T,class Alloc>
+  Matrix<T,Alloc> operator*(const Matrix<T,Alloc>& a, const std::vector<T,Alloc>& b){
+	  //throw anpi::Exception("unimplemented method");
+	  if (a.cols() != b.size()) {
+	      		throw anpi::Exception("Incompatible size of both matrix at multiplication method");
+	  }
+
+	  Matrix<T,Alloc> c(a.rows(),1,anpi::DoNotInitialize);
+	  ::anpi::aimpl::multiply(a,b,c);
+	  return c;
   }
 
   
